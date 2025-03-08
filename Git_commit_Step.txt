@@ -1,0 +1,26 @@
+#Added user 1 commit
+git init
+git config --global user.name "User1"
+git config --global user.email "user1@example.com"
+echo "// User1 added a comment" >> ToDoList.java
+git add .
+git commit -m "User1: Added a comment to ToDoList.java"
+
+#Added user 2 commit
+git config user.name "User2"
+git config user.email "user2@example.com"
+echo "// User2 added another comment" >> ToDoList.java
+git add .
+git commit -m "User2: Added another comment"
+
+#verify from console using below command
+git log --oneline --author="User1"
+e1b4a17 User1: Added a comment to ToDoList.java
+
+git log --oneline --author="User2"
+5eaf40d (HEAD -> master) User2: Added another comment
+
+git log --pretty=format:"%h - %an: %s"
+5eaf40d - User2: User2: Added another comment
+e1b4a17 - User1: User1: Added a comment to ToDoList.java
+
