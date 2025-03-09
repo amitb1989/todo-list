@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        SONARQUBE_SERVER = 'LocalSonarQube'
+    }
+
+    tools {
+        maven 'Maven3'  // Use the Maven configured in Jenkins
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,21 +16,31 @@ pipeline {
             }
         }
 
-        stage('Compile Java Code') {
+        stage('Build') {
             steps {
-                bat 'javac *.java'  // Compile Java files
+                bat 'mvn clean package'  // Windows command
             }
         }
 
-        stage('Run Java Program') {
+        stage('SonarQube Scan') {
             steps {
-                bat 'java ToDoList'  // Change this to the main class
+                withSonarQubeEnv('LocalSonarQube') {
+                    bat 'mvn sonar:sonar -Dsonar.projectKey=Java_project_pipeline -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_4e3cff0dde1de5dd0ab7aa1d3916f882647218d2'
+                }
             }
         }
 
-        stage('Archive Artifacts') {
+        stage('Quality Gate') {
             steps {
-                archiveArtifacts artifacts: '*.class', fingerprint: true
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Upload Build Artifacts') {
+            steps {
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
 
@@ -30,6 +48,15 @@ pipeline {
             steps {
                 cleanWs()
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
