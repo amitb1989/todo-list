@@ -14,14 +14,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'  // Maven build
+                bat 'mvn clean package'  // Use `bat` instead of `sh` on Windows
             }
         }
 
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('LocalSonarQube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=Java_project_pipeline -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_4e3cff0dde1de5dd0ab7aa1d3916f882647218d2'
+                    bat 'mvn sonar:sonar -Dsonar.projectKey=Java_project_pipeline -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_4e3cff0dde1de5dd0ab7aa1d3916f882647218d2'
                 }
             }
         }
