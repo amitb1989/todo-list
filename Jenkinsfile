@@ -2,7 +2,11 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_SERVER = 'LocalSonarQube'  // SonarQube configured in Jenkins
+        SONARQUBE_SERVER = 'LocalSonarQube'
+    }
+
+    tools {
+        maven 'Maven3'  // Use the Maven configured in Jenkins
     }
 
     stages {
@@ -14,7 +18,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean package'  // Use `bat` instead of `sh` on Windows
+                bat 'mvn clean package'  // Windows command
             }
         }
 
